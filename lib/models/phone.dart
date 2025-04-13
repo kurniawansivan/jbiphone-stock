@@ -19,6 +19,12 @@ class Phone {
   DateTime? saleDate;
   double? salePrice;
 
+  // Service information
+  String? serviceName;
+  String? serviceCenterName;
+  String? serviceCenterPhone;
+  double? servicePrice;
+
   Phone({
     this.id,
     required this.model,
@@ -35,14 +41,23 @@ class Phone {
     this.buyerPhone,
     this.saleDate,
     this.salePrice,
+    this.serviceName,
+    this.serviceCenterName,
+    this.serviceCenterPhone,
+    this.servicePrice,
   });
 
   // Calculate profit
   double? getProfit() {
     if (status == PhoneStatus.sold && salePrice != null) {
-      return salePrice! - purchasePrice;
+      return salePrice! - purchasePrice - (servicePrice ?? 0);
     }
     return null;
+  }
+
+  // Get total cost (purchase price + service price if any)
+  double getTotalCost() {
+    return purchasePrice + (servicePrice ?? 0);
   }
 
   // Convert Phone object to a map for database operations
@@ -63,6 +78,10 @@ class Phone {
       'buyer_phone': buyerPhone,
       'sale_date': saleDate?.millisecondsSinceEpoch,
       'sale_price': salePrice,
+      'service_name': serviceName,
+      'service_center_name': serviceCenterName,
+      'service_center_phone': serviceCenterPhone,
+      'service_price': servicePrice,
     };
   }
 
@@ -86,6 +105,10 @@ class Phone {
           ? DateTime.fromMillisecondsSinceEpoch(map['sale_date'])
           : null,
       salePrice: map['sale_price'],
+      serviceName: map['service_name'],
+      serviceCenterName: map['service_center_name'],
+      serviceCenterPhone: map['service_center_phone'],
+      servicePrice: map['service_price'],
     );
   }
 }

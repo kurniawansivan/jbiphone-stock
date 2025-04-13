@@ -24,7 +24,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3, // Incremented version number for the schema update
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -47,7 +47,11 @@ class DatabaseHelper {
         buyer_name TEXT,
         buyer_phone TEXT,
         sale_date INTEGER,
-        sale_price REAL
+        sale_price REAL,
+        service_name TEXT,
+        service_center_name TEXT,
+        service_center_phone TEXT,
+        service_price REAL
       )
     ''');
   }
@@ -56,9 +60,22 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       // Add new columns for the color, capacity, seller name and phone
       await db.execute('ALTER TABLE phones ADD COLUMN color TEXT DEFAULT ""');
-      await db.execute('ALTER TABLE phones ADD COLUMN capacity TEXT DEFAULT ""');
-      await db.execute('ALTER TABLE phones ADD COLUMN seller_name TEXT DEFAULT ""');
-      await db.execute('ALTER TABLE phones ADD COLUMN seller_phone TEXT DEFAULT ""');
+      await db
+          .execute('ALTER TABLE phones ADD COLUMN capacity TEXT DEFAULT ""');
+      await db
+          .execute('ALTER TABLE phones ADD COLUMN seller_name TEXT DEFAULT ""');
+      await db.execute(
+          'ALTER TABLE phones ADD COLUMN seller_phone TEXT DEFAULT ""');
+    }
+
+    if (oldVersion < 3) {
+      // Add new columns for service information
+      await db.execute('ALTER TABLE phones ADD COLUMN service_name TEXT');
+      await db
+          .execute('ALTER TABLE phones ADD COLUMN service_center_name TEXT');
+      await db
+          .execute('ALTER TABLE phones ADD COLUMN service_center_phone TEXT');
+      await db.execute('ALTER TABLE phones ADD COLUMN service_price REAL');
     }
   }
 

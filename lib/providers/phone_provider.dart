@@ -108,6 +108,43 @@ class PhoneProvider with ChangeNotifier {
     }
   }
 
+  // Update service information
+  Future<void> updateServiceInfo(
+    int phoneId,
+    String serviceName,
+    String serviceCenterName,
+    String serviceCenterPhone,
+    double servicePrice,
+  ) async {
+    final index = _phones.indexWhere((phone) => phone.id == phoneId);
+    if (index != -1) {
+      final phone = _phones[index];
+      phone.status = PhoneStatus.onService;
+      phone.serviceName = serviceName;
+      phone.serviceCenterName = serviceCenterName;
+      phone.serviceCenterPhone = serviceCenterPhone;
+      phone.servicePrice = servicePrice;
+
+      await _databaseHelper.updatePhone(phone);
+      _filterPhonesByStatus();
+      notifyListeners();
+    }
+  }
+
+  // Clear service information when returning to stock
+  Future<void> clearServiceInfo(int phoneId) async {
+    final index = _phones.indexWhere((phone) => phone.id == phoneId);
+    if (index != -1) {
+      final phone = _phones[index];
+      // We don't clear servicePrice since it's part of the phone's total cost
+      phone.status = PhoneStatus.inStock;
+
+      await _databaseHelper.updatePhone(phone);
+      _filterPhonesByStatus();
+      notifyListeners();
+    }
+  }
+
   // Delete a phone
   Future<void> deletePhone(int phoneId) async {
     await _databaseHelper.deletePhone(phoneId);

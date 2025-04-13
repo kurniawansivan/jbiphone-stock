@@ -5,6 +5,7 @@ import '../providers/phone_provider.dart';
 import '../providers/stats_provider.dart';
 import '../utils/formatters.dart';
 import 'sell_phone_screen.dart';
+import 'service_phone_screen.dart';
 
 class PhoneDetailScreen extends StatelessWidget {
   final Phone phone;
@@ -175,6 +176,14 @@ class PhoneDetailScreen extends StatelessWidget {
             _buildDetailRow('Purchase Price',
                 Formatters.formatCurrency(phone.purchasePrice)),
 
+            // Total Cost (Purchase Price + Service Price)
+            if (phone.servicePrice != null && phone.servicePrice! > 0)
+              _buildDetailRow(
+                'Total Cost',
+                Formatters.formatCurrency(phone.getTotalCost()),
+                valueColor: Colors.red,
+              ),
+
             // Notes
             if (phone.notes != null && phone.notes!.isNotEmpty)
               _buildDetailRow('Notes', phone.notes!),
@@ -200,8 +209,41 @@ class PhoneDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
+            // Service Information Section (Only for onService phones or when service info exists)
+            if (phone.status == PhoneStatus.onService ||
+                phone.serviceName != null) ...[
+              const Text(
+                'Service Information',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+
+              // Service Name
+              if (phone.serviceName != null)
+                _buildDetailRow('Service Name', phone.serviceName!),
+
+              // Service Center
+              if (phone.serviceCenterName != null)
+                _buildDetailRow('Service Center', phone.serviceCenterName!),
+
+              // Service Center Phone
+              if (phone.serviceCenterPhone != null)
+                _buildDetailRow(
+                    'Service Center Phone', phone.serviceCenterPhone!),
+
+              // Service Price
+              if (phone.servicePrice != null)
+                _buildDetailRow('Service Price',
+                    Formatters.formatCurrency(phone.servicePrice!)),
+            ],
+
             // Buyer Information Section (Only for sold phones)
             if (phone.status == PhoneStatus.sold) ...[
+              const SizedBox(height: 16),
               const Text(
                 'Buyer Information',
                 style: TextStyle(
@@ -253,6 +295,17 @@ class PhoneDetailScreen extends StatelessWidget {
                     ElevatedButton.icon(
                       onPressed: () async {
                         await phoneProvider.markPhoneAsOnService(phone.id!);
+
+                        if (context.mounted) {
+                          // Navigate to service form
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ServicePhoneScreen(phone: phone),
+                            ),
+                          );
+                        }
                       },
                       icon: const Icon(Icons.build),
                       label: const Text('Mark as On Service'),
@@ -261,7 +314,24 @@ class PhoneDetailScreen extends StatelessWidget {
                         foregroundColor: Colors.white,
                       ),
                     )
-                  else
+                  else if (phone.status == PhoneStatus.onService) ...[
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ServicePhoneScreen(phone: phone),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.edit),
+                      label: const Text('Edit Service Info'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
                     ElevatedButton.icon(
                       onPressed: () async {
                         await phoneProvider.markPhoneAsInStock(phone.id!);
@@ -273,6 +343,7 @@ class PhoneDetailScreen extends StatelessWidget {
                         foregroundColor: Colors.white,
                       ),
                     ),
+                  ],
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.push(
