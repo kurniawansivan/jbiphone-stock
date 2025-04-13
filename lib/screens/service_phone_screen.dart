@@ -209,12 +209,12 @@ class _ServicePhoneScreenState extends State<ServicePhoneScreen> {
               const SizedBox(height: 24),
 
               // Explanation about price
-              const Card(
-                color: Color.fromARGB(255, 245, 245, 245),
+              Card(
+                color: const Color.fromARGB(255, 245, 245, 245),
                 child: Padding(
-                  padding: EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
-                    children: [
+                    children: const [
                       Icon(Icons.info_outline, color: Colors.blue),
                       SizedBox(width: 12),
                       Expanded(

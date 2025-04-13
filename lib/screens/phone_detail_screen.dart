@@ -60,17 +60,24 @@ class PhoneDetailScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         await phoneProvider.deletePhone(phone.id!);
+
+                        // Use context.mounted to check if the widget is still in the tree
                         if (context.mounted) {
                           // Also refresh stats
                           await Provider.of<StatsProvider>(context,
                                   listen: false)
                               .loadAllCurrentStats();
-                          Navigator.pop(context); // Close dialog
-                          Navigator.pop(context); // Go back to previous screen
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Phone deleted successfully')),
-                          );
+
+                          // Check again after the async operation
+                          if (context.mounted) {
+                            Navigator.pop(context); // Close dialog
+                            Navigator.pop(
+                                context); // Go back to previous screen
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Phone deleted successfully')),
+                            );
+                          }
                         }
                       },
                       child: const Text('DELETE'),

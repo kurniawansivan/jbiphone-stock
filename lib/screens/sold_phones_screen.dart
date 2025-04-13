@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 import '../models/phone.dart';
 import '../providers/phone_provider.dart';
 import '../utils/formatters.dart';
@@ -167,6 +166,11 @@ class _SoldPhonesScreenState extends State<SoldPhonesScreen> {
               });
             },
             searchHint: 'Search by model, buyer name or IMEI',
+            onChanged: (value) {
+              setState(() {
+                // Refresh the screen
+              });
+            },
           ),
 
           // Date range indicator (if active)

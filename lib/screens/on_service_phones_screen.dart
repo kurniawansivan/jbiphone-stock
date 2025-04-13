@@ -21,8 +21,7 @@ class OnServicePhonesScreen extends StatelessWidget {
           // Search filter bar
           SearchFilterBar(
             onChanged: (value) {
-              Provider.of<PhoneProvider>(context, listen: false)
-                  .loadPhones(); // You could implement specific filtering here
+              Provider.of<PhoneProvider>(context, listen: false).loadPhones();
             },
           ),
 

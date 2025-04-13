@@ -155,6 +155,7 @@ class _InventoryScreenState extends State<InventoryScreen>
               });
             },
             searchHint: 'Search by model, IMEI or notes',
+            onChanged: (value) {},
           ),
 
           // Tab content
