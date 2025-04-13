@@ -295,80 +295,114 @@ class PhoneDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (phone.status == PhoneStatus.inStock)
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        await phoneProvider.markPhoneAsOnService(phone.id!);
 
-                        if (context.mounted) {
-                          // Navigate to service form
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  ServicePhoneScreen(phone: phone),
-                            ),
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.build),
-                      label: const Text('Mark as On Service'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                      ),
-                    )
-                  else if (phone.status == PhoneStatus.onService) ...[
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ServicePhoneScreen(phone: phone),
+              // Using a wrapping Row with smaller buttons
+              phone.status == PhoneStatus.onService
+                  ? Wrap(
+                      spacing: 8.0,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ServicePhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit, size: 16),
+                          label: const Text('Edit Service'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
                           ),
-                        );
-                      },
-                      icon: const Icon(Icons.edit),
-                      label: const Text('Edit Service Info'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        await phoneProvider.markPhoneAsInStock(phone.id!);
-                      },
-                      icon: const Icon(Icons.check),
-                      label: const Text('Mark as In Stock'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SellPhoneScreen(phone: phone),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.attach_money),
-                    label: const Text('Sell Phone'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await phoneProvider.markPhoneAsInStock(phone.id!);
+                          },
+                          icon: const Icon(Icons.check, size: 16),
+                          label: const Text('Mark as In Stock'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SellPhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.attach_money, size: 16),
+                          label: const Text('Sell Phone'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (phone.status == PhoneStatus.inStock)
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              await phoneProvider
+                                  .markPhoneAsOnService(phone.id!);
+
+                              if (context.mounted) {
+                                // Navigate to service form
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ServicePhoneScreen(phone: phone),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.build),
+                            label: const Text('Mark as On Service'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SellPhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.attach_money),
+                          label: const Text('Sell Phone'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ],
           ],
         ),

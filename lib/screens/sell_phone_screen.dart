@@ -164,15 +164,13 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(10),
+                  LengthLimitingTextInputFormatter(15), // Changed from 10 to 15
                 ],
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter the buyer\'s phone number';
                   }
-                  if (value.length < 10) {
-                    return 'Please enter a valid phone number';
-                  }
+                  // Removed phone number length check to allow for different formats
                   return null;
                 },
               ),
