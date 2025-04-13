@@ -36,7 +36,7 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
             const Icon(Icons.search, color: Colors.grey),
             const SizedBox(width: 8),
 
-            // Search TextField
+            // Search TextField with limited width to make space for dropdown
             Expanded(
               child: TextField(
                 controller: widget.searchController,
@@ -48,18 +48,37 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
               ),
             ),
 
-            // Filter dropdown
-            DropdownButton<String>(
-              value: widget.selectedFilter,
-              underline: const SizedBox(),
-              icon: const Icon(Icons.filter_list),
-              onChanged: widget.onFilterChanged,
-              items: widget.filterOptions.map((FilterOption option) {
-                return DropdownMenuItem<String>(
-                  value: option.value,
-                  child: Text(option.label),
-                );
-              }).toList(),
+            // Separator
+            const SizedBox(width: 8),
+
+            // Filter label
+            const Text(
+              'Filter:',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 14,
+              ),
+            ),
+
+            // Filter dropdown - right aligned
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: widget.selectedFilter,
+                isDense: true,
+                icon: const Icon(Icons.filter_list, size: 20),
+                iconEnabledColor: Colors.blue,
+                alignment: AlignmentDirectional.centerEnd,
+                onChanged: widget.onFilterChanged,
+                items: widget.filterOptions.map((FilterOption option) {
+                  return DropdownMenuItem<String>(
+                    value: option.value,
+                    child: Text(
+                      option.label,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ],
         ),
