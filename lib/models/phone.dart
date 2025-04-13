@@ -6,6 +6,10 @@ class Phone {
   final String imei;
   final DateTime purchaseDate;
   final double purchasePrice;
+  final String color;
+  final String capacity;
+  final String sellerName;
+  final String sellerPhone;
   String? notes;
   PhoneStatus status;
 
@@ -21,6 +25,10 @@ class Phone {
     required this.imei,
     required this.purchaseDate,
     required this.purchasePrice,
+    required this.color,
+    required this.capacity,
+    required this.sellerName,
+    required this.sellerPhone,
     this.notes,
     this.status = PhoneStatus.inStock,
     this.buyerName,
@@ -45,6 +53,10 @@ class Phone {
       'imei': imei,
       'purchase_date': purchaseDate.millisecondsSinceEpoch,
       'purchase_price': purchasePrice,
+      'color': color,
+      'capacity': capacity,
+      'seller_name': sellerName,
+      'seller_phone': sellerPhone,
       'notes': notes,
       'status': status.index,
       'buyer_name': buyerName,
@@ -62,6 +74,10 @@ class Phone {
       imei: map['imei'],
       purchaseDate: DateTime.fromMillisecondsSinceEpoch(map['purchase_date']),
       purchasePrice: map['purchase_price'],
+      color: map['color'] ?? '',
+      capacity: map['capacity'] ?? '',
+      sellerName: map['seller_name'] ?? '',
+      sellerPhone: map['seller_phone'] ?? '',
       notes: map['notes'],
       status: PhoneStatus.values[map['status']],
       buyerName: map['buyer_name'],

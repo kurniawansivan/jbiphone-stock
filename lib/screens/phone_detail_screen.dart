@@ -158,6 +158,12 @@ class PhoneDetailScreen extends StatelessWidget {
             // Phone model
             _buildDetailRow('Model', phone.model),
 
+            // Color
+            _buildDetailRow('Color', phone.color),
+
+            // Capacity
+            _buildDetailRow('Capacity', phone.capacity),
+
             // IMEI
             _buildDetailRow('IMEI', phone.imei),
 
@@ -172,6 +178,25 @@ class PhoneDetailScreen extends StatelessWidget {
             // Notes
             if (phone.notes != null && phone.notes!.isNotEmpty)
               _buildDetailRow('Notes', phone.notes!),
+
+            const SizedBox(height: 16),
+
+            // Seller Information Section
+            const Text(
+              'Seller Information',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Divider(),
+
+            // Seller Name
+            _buildDetailRow('Seller Name', phone.sellerName),
+
+            // Seller Phone
+            _buildDetailRow('Seller Phone', phone.sellerPhone),
 
             const SizedBox(height: 16),
 

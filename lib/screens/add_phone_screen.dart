@@ -18,6 +18,10 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
   final _modelController = TextEditingController();
   final _imeiController = TextEditingController();
   final _priceController = TextEditingController();
+  final _colorController = TextEditingController();
+  final _capacityController = TextEditingController();
+  final _sellerNameController = TextEditingController();
+  final _sellerPhoneController = TextEditingController();
   final _notesController = TextEditingController();
   DateTime _purchaseDate = DateTime.now();
   PhoneStatus _initialStatus = PhoneStatus.inStock;
@@ -27,6 +31,10 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
     _modelController.dispose();
     _imeiController.dispose();
     _priceController.dispose();
+    _colorController.dispose();
+    _capacityController.dispose();
+    _sellerNameController.dispose();
+    _sellerPhoneController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -54,6 +62,10 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
         imei: _imeiController.text.trim(),
         purchaseDate: _purchaseDate,
         purchasePrice: double.parse(_priceController.text),
+        color: _colorController.text.trim(),
+        capacity: _capacityController.text.trim(),
+        sellerName: _sellerNameController.text.trim(),
+        sellerPhone: _sellerPhoneController.text.trim(),
         notes: _notesController.text.trim(),
         status: _initialStatus,
       );
@@ -82,6 +94,17 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Section Title - Phone Details
+              const Text(
+                'Phone Details',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 16),
+
               // Model
               TextFormField(
                 controller: _modelController,
@@ -125,12 +148,48 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
               ),
               const SizedBox(height: 16),
 
+              // Color
+              TextFormField(
+                controller: _colorController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Color *',
+                  hintText: 'e.g. Black, Silver, Gold',
+                  prefixIcon: Icon(Icons.color_lens),
+                ),
+                textCapitalization: TextCapitalization.words,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter the phone color';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Capacity
+              TextFormField(
+                controller: _capacityController,
+                decoration: const InputDecoration(
+                  labelText: 'Storage Capacity *',
+                  hintText: 'e.g. 64GB, 128GB, 256GB',
+                  prefixIcon: Icon(Icons.sd_storage),
+                ),
+                textCapitalization: TextCapitalization.words,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter the storage capacity';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
               // Purchase Price
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(
                   labelText: 'Purchase Price *',
-                  hintText: 'e.g. 500.00',
+                  hintText: 'e.g. 5000000',
                   prefixIcon: Icon(Icons.attach_money),
                 ),
                 keyboardType:
@@ -161,6 +220,67 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
                   child: Text(
                     Formatters.formatDate(_purchaseDate),
                   ),
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // Section Title - Seller Information
+              const Text(
+                'Seller Information',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Seller Name
+              TextFormField(
+                controller: _sellerNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Seller Name *',
+                  hintText: 'Enter the seller\'s name',
+                  prefixIcon: Icon(Icons.person),
+                ),
+                textCapitalization: TextCapitalization.words,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter the seller\'s name';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Seller Phone
+              TextFormField(
+                controller: _sellerPhoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Seller Phone Number *',
+                  hintText: 'e.g. 08123456789',
+                  prefixIcon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Please enter the seller\'s phone number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 32),
+
+              // Section Title - Additional Information
+              const Text(
+                'Additional Information',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
               ),
               const SizedBox(height: 16),
@@ -208,7 +328,7 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
                 ),
                 maxLines: 3,
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
 
               // Submit Button
               ElevatedButton(

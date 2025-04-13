@@ -24,8 +24,9 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -37,6 +38,10 @@ class DatabaseHelper {
         imei TEXT NOT NULL UNIQUE,
         purchase_date INTEGER NOT NULL,
         purchase_price REAL NOT NULL,
+        color TEXT NOT NULL,
+        capacity TEXT NOT NULL,
+        seller_name TEXT NOT NULL,
+        seller_phone TEXT NOT NULL,
         notes TEXT,
         status INTEGER NOT NULL,
         buyer_name TEXT,
@@ -45,6 +50,16 @@ class DatabaseHelper {
         sale_price REAL
       )
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Add new columns for the color, capacity, seller name and phone
+      await db.execute('ALTER TABLE phones ADD COLUMN color TEXT DEFAULT ""');
+      await db.execute('ALTER TABLE phones ADD COLUMN capacity TEXT DEFAULT ""');
+      await db.execute('ALTER TABLE phones ADD COLUMN seller_name TEXT DEFAULT ""');
+      await db.execute('ALTER TABLE phones ADD COLUMN seller_phone TEXT DEFAULT ""');
+    }
   }
 
   // CRUD Operations for Phones

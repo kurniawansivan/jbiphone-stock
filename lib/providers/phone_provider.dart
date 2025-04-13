@@ -43,6 +43,10 @@ class PhoneProvider with ChangeNotifier {
       imei: phone.imei,
       purchaseDate: phone.purchaseDate,
       purchasePrice: phone.purchasePrice,
+      color: phone.color,
+      capacity: phone.capacity,
+      sellerName: phone.sellerName,
+      sellerPhone: phone.sellerPhone,
       notes: phone.notes,
       status: phone.status,
     );

@@ -225,7 +225,7 @@ class _InventoryScreenState extends State<InventoryScreen>
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: ListTile(
               title: Text(
-                phone.model,
+                "${phone.model} - ${phone.capacity} ${phone.color}",
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Column(
