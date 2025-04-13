@@ -386,6 +386,9 @@ class _SoldPhonesScreenState extends State<SoldPhonesScreen> {
         itemBuilder: (context, index) {
           final phone = phones[index];
           final profit = phone.getProfit();
+          final totalCost = phone.getTotalCost();
+          final hasServiceCost =
+              phone.servicePrice != null && phone.servicePrice! > 0;
 
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -399,10 +402,31 @@ class _SoldPhonesScreenState extends State<SoldPhonesScreen> {
                 children: [
                   Text('Sold to: ${phone.buyerName}'),
                   Text('Sale date: ${Formatters.formatDate(phone.saleDate!)}'),
+
+                  // Cost breakdown showing purchase and service costs separately if present
+                  if (hasServiceCost) ...[
+                    Row(
+                      children: [
+                        Text(
+                            'Base: ${Formatters.formatCurrency(phone.purchasePrice)}'),
+                        const Text(' + '),
+                        Text(
+                            'Service: ${Formatters.formatCurrency(phone.servicePrice!)}'),
+                      ],
+                    ),
+                  ] else ...[
+                    Text(
+                        'Cost: ${Formatters.formatCurrency(phone.purchasePrice)}'),
+                  ],
+
                   Row(
                     children: [
-                      Text(
-                          'Purchase: ${Formatters.formatCurrency(phone.purchasePrice)}'),
+                      if (hasServiceCost)
+                        Text(
+                            'Total Cost: ${Formatters.formatCurrency(totalCost)}')
+                      else
+                        Text(
+                            'Cost: ${Formatters.formatCurrency(phone.purchasePrice)}'),
                       const SizedBox(width: 8),
                       const Text('→'),
                       const SizedBox(width: 8),

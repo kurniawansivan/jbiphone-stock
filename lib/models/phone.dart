@@ -47,10 +47,11 @@ class Phone {
     this.servicePrice,
   });
 
-  // Calculate profit
+  // Calculate profit properly by using total cost (purchase price + service price)
   double? getProfit() {
     if (status == PhoneStatus.sold && salePrice != null) {
-      return salePrice! - purchasePrice - (servicePrice ?? 0);
+      // Use getTotalCost() instead of just purchasePrice
+      return salePrice! - getTotalCost();
     }
     return null;
   }

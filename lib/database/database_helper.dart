@@ -156,9 +156,9 @@ class DatabaseHelper {
     final result = await db.rawQuery('''
       SELECT 
         COUNT(*) as phonesCount,
-        SUM(sale_price - purchase_price) as totalProfit,
+        SUM(sale_price - (purchase_price + IFNULL(service_price, 0))) as totalProfit,
         SUM(sale_price) as totalRevenue,
-        SUM(purchase_price) as totalCost
+        SUM(purchase_price + IFNULL(service_price, 0)) as totalCost
       FROM phones 
       WHERE status = ? AND sale_date BETWEEN ? AND ?
     ''', [PhoneStatus.sold.index, startOfDay, endOfDay]);
@@ -180,9 +180,9 @@ class DatabaseHelper {
     final result = await db.rawQuery('''
       SELECT 
         COUNT(*) as phonesCount,
-        SUM(sale_price - purchase_price) as totalProfit,
+        SUM(sale_price - (purchase_price + IFNULL(service_price, 0))) as totalProfit,
         SUM(sale_price) as totalRevenue,
-        SUM(purchase_price) as totalCost
+        SUM(purchase_price + IFNULL(service_price, 0)) as totalCost
       FROM phones 
       WHERE status = ? AND sale_date BETWEEN ? AND ?
     ''', [PhoneStatus.sold.index, startOfMonth, endOfMonth]);
@@ -204,9 +204,9 @@ class DatabaseHelper {
     final result = await db.rawQuery('''
       SELECT 
         COUNT(*) as phonesCount,
-        SUM(sale_price - purchase_price) as totalProfit,
+        SUM(sale_price - (purchase_price + IFNULL(service_price, 0))) as totalProfit,
         SUM(sale_price) as totalRevenue,
-        SUM(purchase_price) as totalCost
+        SUM(purchase_price + IFNULL(service_price, 0)) as totalCost
       FROM phones 
       WHERE status = ? AND sale_date BETWEEN ? AND ?
     ''', [PhoneStatus.sold.index, startOfYear, endOfYear]);
@@ -224,7 +224,7 @@ class DatabaseHelper {
     final result = await db.rawQuery('''
       SELECT 
         COUNT(*) as phonesCount,
-        SUM(purchase_price) as totalCost
+        SUM(purchase_price + IFNULL(service_price, 0)) as totalCost
       FROM phones 
       WHERE status IN (?, ?)
     ''', [PhoneStatus.inStock.index, PhoneStatus.onService.index]);

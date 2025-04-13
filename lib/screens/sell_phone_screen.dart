@@ -48,7 +48,8 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
     if (_salePriceController.text.isNotEmpty) {
       try {
         final salePrice = double.parse(_salePriceController.text);
-        return salePrice - widget.phone.purchasePrice;
+        // Use getTotalCost() instead of purchasePrice
+        return salePrice - widget.phone.getTotalCost();
       } catch (e) {
         return 0.0;
       }
@@ -239,6 +240,8 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
+
+                        // Base purchase price
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -247,6 +250,34 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                                 widget.phone.purchasePrice)),
                           ],
                         ),
+
+                        // Show service cost if applicable
+                        if (widget.phone.servicePrice != null &&
+                            widget.phone.servicePrice! > 0) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Service Cost:'),
+                              Text(Formatters.formatCurrency(
+                                  widget.phone.servicePrice!)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Cost:'),
+                              Text(
+                                Formatters.formatCurrency(
+                                    widget.phone.getTotalCost()),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+
                         const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
