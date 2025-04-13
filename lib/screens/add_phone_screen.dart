@@ -303,14 +303,14 @@ class _AddPhoneScreenState extends State<AddPhoneScreen> {
                         });
                       }
                     },
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         value: PhoneStatus.inStock,
-                        child: const Text('In Stock'),
+                        child: Text('In Stock'),
                       ),
                       DropdownMenuItem(
                         value: PhoneStatus.onService,
-                        child: const Text('On Service'),
+                        child: Text('On Service'),
                       ),
                     ],
                   ),
