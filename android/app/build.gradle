@@ -47,7 +47,7 @@ android {
         applicationId "com.jbiphone.jbiphone_stock"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 19  // Updated from flutter.minSdkVersion to 19 for share_plus compatibility
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -58,7 +58,29 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+            
+            // Customize APK output filename
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "JBIphone Bali Stock-${variant.buildType.name}-v${variant.versionName}.apk"
+                }
+            }
         }
+        
+        debug {
+            // Customize APK filename for debug builds too
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "JBIphone Bali Stock-${variant.buildType.name}-v${variant.versionName}.apk"
+                }
+            }
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10'
+        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.10'
+        resolutionStrategy.force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.10'
     }
 }
 

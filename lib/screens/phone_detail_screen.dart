@@ -5,6 +5,7 @@ import '../providers/phone_provider.dart';
 import '../providers/stats_provider.dart';
 import '../utils/formatters.dart';
 import 'sell_phone_screen.dart';
+import 'service_phone_screen.dart';
 
 class PhoneDetailScreen extends StatelessWidget {
   final Phone phone;
@@ -59,17 +60,24 @@ class PhoneDetailScreen extends StatelessWidget {
                     TextButton(
                       onPressed: () async {
                         await phoneProvider.deletePhone(phone.id!);
+
+                        // Use context.mounted to check if the widget is still in the tree
                         if (context.mounted) {
                           // Also refresh stats
                           await Provider.of<StatsProvider>(context,
                                   listen: false)
                               .loadAllCurrentStats();
-                          Navigator.pop(context); // Close dialog
-                          Navigator.pop(context); // Go back to previous screen
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Phone deleted successfully')),
-                          );
+
+                          // Check again after the async operation
+                          if (context.mounted) {
+                            Navigator.pop(context); // Close dialog
+                            Navigator.pop(
+                                context); // Go back to previous screen
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text('Phone deleted successfully')),
+                            );
+                          }
                         }
                       },
                       child: const Text('DELETE'),
@@ -175,6 +183,14 @@ class PhoneDetailScreen extends StatelessWidget {
             _buildDetailRow('Purchase Price',
                 Formatters.formatCurrency(phone.purchasePrice)),
 
+            // Total Cost (Purchase Price + Service Price)
+            if (phone.servicePrice != null && phone.servicePrice! > 0)
+              _buildDetailRow(
+                'Total Cost',
+                Formatters.formatCurrency(phone.getTotalCost()),
+                valueColor: Colors.red,
+              ),
+
             // Notes
             if (phone.notes != null && phone.notes!.isNotEmpty)
               _buildDetailRow('Notes', phone.notes!),
@@ -200,8 +216,41 @@ class PhoneDetailScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
+            // Service Information Section (Only for onService phones or when service info exists)
+            if (phone.status == PhoneStatus.onService ||
+                phone.serviceName != null) ...[
+              const Text(
+                'Service Information',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Divider(),
+
+              // Service Name
+              if (phone.serviceName != null)
+                _buildDetailRow('Service Name', phone.serviceName!),
+
+              // Service Center
+              if (phone.serviceCenterName != null)
+                _buildDetailRow('Service Center', phone.serviceCenterName!),
+
+              // Service Center Phone
+              if (phone.serviceCenterPhone != null)
+                _buildDetailRow(
+                    'Service Center Phone', phone.serviceCenterPhone!),
+
+              // Service Price
+              if (phone.servicePrice != null)
+                _buildDetailRow('Service Price',
+                    Formatters.formatCurrency(phone.servicePrice!)),
+            ],
+
             // Buyer Information Section (Only for sold phones)
             if (phone.status == PhoneStatus.sold) ...[
+              const SizedBox(height: 16),
               const Text(
                 'Buyer Information',
                 style: TextStyle(
@@ -246,51 +295,114 @@ class PhoneDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  if (phone.status == PhoneStatus.inStock)
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        await phoneProvider.markPhoneAsOnService(phone.id!);
-                      },
-                      icon: const Icon(Icons.build),
-                      label: const Text('Mark as On Service'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                      ),
-                    )
-                  else
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        await phoneProvider.markPhoneAsInStock(phone.id!);
-                      },
-                      icon: const Icon(Icons.check),
-                      label: const Text('Mark as In Stock'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                      ),
-                    ),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SellPhoneScreen(phone: phone),
+
+              // Using a wrapping Row with smaller buttons
+              phone.status == PhoneStatus.onService
+                  ? Wrap(
+                      spacing: 8.0,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ServicePhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit, size: 16),
+                          label: const Text('Edit Service'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
                         ),
-                      );
-                    },
-                    icon: const Icon(Icons.attach_money),
-                    label: const Text('Sell Phone'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
+                        ElevatedButton.icon(
+                          onPressed: () async {
+                            await phoneProvider.markPhoneAsInStock(phone.id!);
+                          },
+                          icon: const Icon(Icons.check, size: 16),
+                          label: const Text('Mark as In Stock'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SellPhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.attach_money, size: 16),
+                          label: const Text('Sell Phone'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if (phone.status == PhoneStatus.inStock)
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              await phoneProvider
+                                  .markPhoneAsOnService(phone.id!);
+
+                              if (context.mounted) {
+                                // Navigate to service form
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ServicePhoneScreen(phone: phone),
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.build),
+                            label: const Text('Mark as On Service'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.orange,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SellPhoneScreen(phone: phone),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.attach_money),
+                          label: const Text('Sell Phone'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ],
           ],
         ),

@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
 class SearchFilterBar extends StatefulWidget {
-  final TextEditingController searchController;
-  final Function(String) onSearch;
-  final List<FilterOption> filterOptions;
+  final TextEditingController? searchController;
+  final Function(String)? onSearch;
+  final List<FilterOption>? filterOptions;
   final String? selectedFilter;
-  final Function(String?) onFilterChanged;
+  final Function(String?)? onFilterChanged;
   final String searchHint;
+  final Function(String)? onChanged;
 
   const SearchFilterBar({
     super.key,
-    required this.searchController,
-    required this.onSearch,
-    required this.filterOptions,
+    this.searchController,
+    this.onSearch,
+    this.filterOptions,
     this.selectedFilter,
-    required this.onFilterChanged,
+    this.onFilterChanged,
     this.searchHint = 'Search...',
+    this.onChanged,
   });
 
   @override
@@ -23,6 +25,14 @@ class SearchFilterBar extends StatefulWidget {
 }
 
 class _SearchFilterBarState extends State<SearchFilterBar> {
+  final _defaultController = TextEditingController();
+
+  @override
+  void dispose() {
+    _defaultController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -39,47 +49,58 @@ class _SearchFilterBarState extends State<SearchFilterBar> {
             // Search TextField with limited width to make space for dropdown
             Expanded(
               child: TextField(
-                controller: widget.searchController,
+                controller: widget.searchController ?? _defaultController,
                 decoration: InputDecoration(
                   hintText: widget.searchHint,
                   border: InputBorder.none,
                 ),
-                onChanged: widget.onSearch,
+                onChanged: (value) {
+                  if (widget.onSearch != null) {
+                    widget.onSearch!(value);
+                  }
+                  if (widget.onChanged != null) {
+                    widget.onChanged!(value);
+                  }
+                },
               ),
             ),
 
-            // Separator
-            const SizedBox(width: 8),
+            // Only show filter if filterOptions is provided
+            if (widget.filterOptions != null &&
+                widget.filterOptions!.isNotEmpty) ...[
+              // Separator
+              const SizedBox(width: 8),
 
-            // Filter label
-            const Text(
-              'Filter:',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14,
+              // Filter label
+              const Text(
+                'Filter:',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14,
+                ),
               ),
-            ),
 
-            // Filter dropdown - right aligned
-            DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: widget.selectedFilter,
-                isDense: true,
-                icon: const Icon(Icons.filter_list, size: 20),
-                iconEnabledColor: Colors.blue,
-                alignment: AlignmentDirectional.centerEnd,
-                onChanged: widget.onFilterChanged,
-                items: widget.filterOptions.map((FilterOption option) {
-                  return DropdownMenuItem<String>(
-                    value: option.value,
-                    child: Text(
-                      option.label,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  );
-                }).toList(),
+              // Filter dropdown - right aligned
+              DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: widget.selectedFilter,
+                  isDense: true,
+                  icon: const Icon(Icons.filter_list, size: 20),
+                  iconEnabledColor: Colors.blue,
+                  alignment: AlignmentDirectional.centerEnd,
+                  onChanged: widget.onFilterChanged,
+                  items: widget.filterOptions!.map((FilterOption option) {
+                    return DropdownMenuItem<String>(
+                      value: option.value,
+                      child: Text(
+                        option.label,
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

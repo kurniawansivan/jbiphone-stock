@@ -48,7 +48,8 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
     if (_salePriceController.text.isNotEmpty) {
       try {
         final salePrice = double.parse(_salePriceController.text);
-        return salePrice - widget.phone.purchasePrice;
+        // Use getTotalCost() instead of purchasePrice
+        return salePrice - widget.phone.getTotalCost();
       } catch (e) {
         return 0.0;
       }
@@ -163,15 +164,13 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                 keyboardType: TextInputType.phone,
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(10),
+                  LengthLimitingTextInputFormatter(15), // Changed from 10 to 15
                 ],
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Please enter the buyer\'s phone number';
                   }
-                  if (value.length < 10) {
-                    return 'Please enter a valid phone number';
-                  }
+                  // Removed phone number length check to allow for different formats
                   return null;
                 },
               ),
@@ -239,6 +238,8 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                           ),
                         ),
                         const SizedBox(height: 8),
+
+                        // Base purchase price
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -247,6 +248,34 @@ class _SellPhoneScreenState extends State<SellPhoneScreen> {
                                 widget.phone.purchasePrice)),
                           ],
                         ),
+
+                        // Show service cost if applicable
+                        if (widget.phone.servicePrice != null &&
+                            widget.phone.servicePrice! > 0) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Service Cost:'),
+                              Text(Formatters.formatCurrency(
+                                  widget.phone.servicePrice!)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text('Total Cost:'),
+                              Text(
+                                Formatters.formatCurrency(
+                                    widget.phone.getTotalCost()),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ],
+
                         const SizedBox(height: 4),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/phone_provider.dart';
 import 'providers/stats_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart'; // Changed to import splash screen
 
 void main() {
   runApp(const MyApp());
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        home: const HomeScreen(),
+        home: const SplashScreen(), // Changed to start with splash screen
         debugShowCheckedModeBanner: false,
       ),
     );

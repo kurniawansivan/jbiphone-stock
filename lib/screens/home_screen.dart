@@ -6,6 +6,7 @@ import 'dashboard_screen.dart';
 import 'inventory_screen.dart';
 import 'add_phone_screen.dart';
 import 'sold_phones_screen.dart';
+import 'on_service_phones_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     const DashboardScreen(),
     const InventoryScreen(),
+    const OnServicePhonesScreen(),
     const SoldPhonesScreen(),
   ];
 
@@ -70,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
             _selectedIndex = index;
           });
         },
+        type: BottomNavigationBarType.fixed, // Important for more than 3 items
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
@@ -78,6 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.phone_iphone),
             label: 'Inventory',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.build),
+            label: 'On Service',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.attach_money),
